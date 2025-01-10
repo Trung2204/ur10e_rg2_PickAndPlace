@@ -34,11 +34,6 @@ public class TrajectoryPlanner : MonoBehaviour
     [SerializeField]
     GameObject m_TargetPlacement;
     public GameObject TargetPlacement { get => m_TargetPlacement; set => m_TargetPlacement = value; }
-    // [SerializeField]
-    // GameObject m_Table;
-    // [SerializeField]
-    // GameObject m_3DPrinter ;
-
     [SerializeField]
     GameObject m_Table;
     public GameObject Table { get => m_Table; set => m_Table = value; }
@@ -47,10 +42,11 @@ public class TrajectoryPlanner : MonoBehaviour
     public GameObject Printer { get => m_Printer; set => m_Printer = value; }
 
 
-    // Assures that the gripper is always positioned above the m_Target cube before grasping.
-    readonly Quaternion m_PickOrientation = Quaternion.Euler(180, 90, 0);
-    // TODO: Adjust for better position offset
-    readonly Vector3 m_PickPoseOffset = Vector3.up * 0.27f;
+    // Assures that the gripper is always positioned beside the m_Target cube before grasping.
+    readonly Quaternion m_PickOrientation = Quaternion.Euler(0, 180, 90);
+    readonly Vector3 m_PickPoseOffset = Vector3.left * 0.47f;
+    readonly Quaternion m_PlaceOrientation = Quaternion.Euler(0, 90, 180);
+    readonly Vector3 m_PlacePoseOffset = Vector3.up * 0.25f;
 
     // Articulation Bodies for the Robot arm
     ArticulationBody[] m_JointArticulationBodies;
@@ -107,7 +103,7 @@ public class TrajectoryPlanner : MonoBehaviour
     /// </summary>
     void CloseGripper()
     {
-        float closeValue = 25f;
+        float closeValue = 23f;
 
         SetGripperPosition(closeValue);
     }
@@ -158,14 +154,14 @@ public class TrajectoryPlanner : MonoBehaviour
         request.pick_pose = new PoseMsg
         {
             position = (m_Target.transform.position + m_PickPoseOffset).To<FLU>(),
-            orientation = Quaternion.Euler(180, m_Target.transform.eulerAngles.y + 90, 0).To<FLU>()
+            orientation = m_PickOrientation.To<FLU>()
         };
 
         // Place Pose
         request.place_pose = new PoseMsg
         {
-            position = (m_TargetPlacement.transform.position + m_PickPoseOffset).To<FLU>(),
-            orientation = m_PickOrientation.To<FLU>()
+            position = (m_TargetPlacement.transform.position + m_PlacePoseOffset).To<FLU>(),
+            orientation = m_PlaceOrientation.To<FLU>()
         };
 
         m_Ros.SendServiceMessage<MoverServiceResponse>(m_RosServiceName, request, TrajectoryResponse);
@@ -320,11 +316,6 @@ public class TrajectoryPlanner : MonoBehaviour
             meshes = new MeshMsg[] { meshMsg }
         };
 
-        Debug.Log($"Unity Position: {m_Table.transform.position}");
-        Debug.Log($"Unity Roatation: {m_Table.transform.rotation}");
-        Debug.Log($"Position sent to ROS: {tablePose.position.x},{tablePose.position.y},{tablePose.position.z}");
-        Debug.Log($"Rotation sent to ROS: {tablePose.orientation.x},{tablePose.orientation.y},{tablePose.orientation.z},{tablePose.orientation.w}");
-
         // Publish the CollisionObjectMsg
         m_Ros.Publish("/collision_object", collisionObject);
     }
@@ -401,11 +392,6 @@ public class TrajectoryPlanner : MonoBehaviour
             mesh_poses = new PoseMsg[] { printerPose },
             meshes = new MeshMsg[] { meshMsg }
         };
-
-        Debug.Log($"Unity Position: {m_Printer.transform.position}");
-        Debug.Log($"Unity Roatation: {m_Printer.transform.rotation}");
-        Debug.Log($"Position sent to ROS: {printerPose.position.x},{printerPose.position.y},{printerPose.position.z}");
-        Debug.Log($"Rotation sent to ROS: {printerPose.orientation.x},{printerPose.orientation.y},{printerPose.orientation.z},{printerPose.orientation.w}");
 
         // Publish the CollisionObjectMsg
         m_Ros.Publish("/collision_object", collisionObject);
