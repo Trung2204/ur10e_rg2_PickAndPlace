@@ -14,9 +14,6 @@ This project is a part of a module taught at Vietnamese-German University (VGU),
   - [Configure Unity Project](#configure-unity-project)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Installation
 
 To set up this project, follow these steps:
