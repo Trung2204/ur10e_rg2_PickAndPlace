@@ -36,18 +36,28 @@ public class TrajectoryPlanner : MonoBehaviour
     public GameObject TargetPlacement { get => m_TargetPlacement; set => m_TargetPlacement = value; }
     [SerializeField]
     GameObject m_Table;
+    public GameObject Table { get => m_Table; set => m_Table = value; }
+    [SerializeField]
+    GameObject m_Printer;
+    public GameObject Printer { get => m_Printer; set => m_Printer = value; }
 
-    // Assures that the gripper is always positioned above the m_Target cube before grasping.
-    readonly Quaternion m_PickOrientation = Quaternion.Euler(180, 90, 0);
-    // TODO: Adjust for better position offset
-    readonly Vector3 m_PickPoseOffset = Vector3.up * 0.35f;
 
-    // Articulation Bodies
+    // Assures that the gripper is always positioned beside the m_Target cube before grasping.
+    readonly Quaternion m_PickOrientation = Quaternion.Euler(0, 180, 90);
+    readonly Vector3 m_PickPoseOffset = Vector3.left * 0.47f;
+    readonly Quaternion m_PlaceOrientation = Quaternion.Euler(0, 90, 180);
+    readonly Vector3 m_PlacePoseOffset = Vector3.up * 0.25f;
+
+    // Articulation Bodies for the Robot arm
     ArticulationBody[] m_JointArticulationBodies;
+    // Articulation Bodies for the Gripper
     ArticulationBody m_LeftInnerKnuckle;
     ArticulationBody m_RightInnerKnuckle;
     ArticulationBody m_LeftOuterKnuckle;
     ArticulationBody m_RightOuterKnuckle;
+    ArticulationBody m_leftInnerFinger;
+    ArticulationBody m_rightInnerFinger;
+
 
     // ROS Connector
     ROSConnection m_Ros;
@@ -79,6 +89,13 @@ public class TrajectoryPlanner : MonoBehaviour
         m_RightInnerKnuckle = m_UR10e.transform.Find(gripperBasePath + "/right_inner_knuckle").GetComponent<ArticulationBody>();
         m_LeftOuterKnuckle = m_UR10e.transform.Find(gripperBasePath + "/left_outer_knuckle").GetComponent<ArticulationBody>();
         m_RightOuterKnuckle = m_UR10e.transform.Find(gripperBasePath + "/right_outer_knuckle").GetComponent<ArticulationBody>();
+        m_leftInnerFinger = m_UR10e.transform.Find(gripperBasePath + "/left_outer_knuckle/left_inner_finger").GetComponent<ArticulationBody>();
+        m_rightInnerFinger = m_UR10e.transform.Find(gripperBasePath + "/right_outer_knuckle/right_inner_finger").GetComponent<ArticulationBody>();
+
+        if (!m_LeftInnerKnuckle || !m_RightInnerKnuckle || !m_LeftOuterKnuckle || !m_RightOuterKnuckle || !m_leftInnerFinger || !m_rightInnerFinger)
+        {
+            Debug.LogError("Some gripper articulation bodies are missing. Please check the hierarchy.");
+        }
     }
 
     /// <summary>
@@ -86,32 +103,9 @@ public class TrajectoryPlanner : MonoBehaviour
     /// </summary>
     void CloseGripper()
     {
-        if (m_LeftInnerKnuckle && m_RightInnerKnuckle && m_LeftOuterKnuckle && m_RightOuterKnuckle)
-        {
-            Debug.Log("Closing gripper...");
+        float closeValue = 23f;
 
-            var leftInnerDrive = m_LeftInnerKnuckle.xDrive;
-            var rightInnerDrive = m_RightInnerKnuckle.xDrive;
-            var leftOuterDrive = m_LeftOuterKnuckle.xDrive;
-            var rightOuterDrive = m_RightOuterKnuckle.xDrive;
-
-            // Adjust targets to close the gripper
-            leftInnerDrive.target = 10f; // Adjust as needed
-            rightInnerDrive.target = -10f; // Adjust as needed
-            leftOuterDrive.target = 30f; // Adjust as needed
-            rightOuterDrive.target = -30f; // Adjust as needed
-
-            m_LeftInnerKnuckle.xDrive = leftInnerDrive;
-            m_RightInnerKnuckle.xDrive = rightInnerDrive;
-            m_LeftOuterKnuckle.xDrive = leftOuterDrive;
-            m_RightOuterKnuckle.xDrive = rightOuterDrive;
-
-            Debug.Log("CLosing complete");
-        }
-        else
-        {
-            Debug.LogWarning("Gripper knuckles not initialized.");
-        }
+        SetGripperPosition(closeValue);
     }
 
     /// <summary>
@@ -119,32 +113,9 @@ public class TrajectoryPlanner : MonoBehaviour
     /// </summary>
     void OpenGripper()
     {
-        if (m_LeftInnerKnuckle && m_RightInnerKnuckle && m_LeftOuterKnuckle && m_RightOuterKnuckle)
-        {
-            Debug.Log("Opening gripper...");
+        float openValue = 10f;
 
-            var leftInnerDrive = m_LeftInnerKnuckle.xDrive;
-            var rightInnerDrive = m_RightInnerKnuckle.xDrive;
-            var leftOuterDrive = m_LeftOuterKnuckle.xDrive;
-            var rightOuterDrive = m_RightOuterKnuckle.xDrive;
-
-            // Adjust targets to open the gripper
-            leftInnerDrive.target = -10f; // Adjust as needed
-            rightInnerDrive.target = 10f; // Adjust as needed
-            leftOuterDrive.target = -30f; // Adjust as needed
-            rightOuterDrive.target = 30f; // Adjust as needed
-
-            m_LeftInnerKnuckle.xDrive = leftInnerDrive;
-            m_RightInnerKnuckle.xDrive = rightInnerDrive;
-            m_LeftOuterKnuckle.xDrive = leftOuterDrive;
-            m_RightOuterKnuckle.xDrive = rightOuterDrive;
-
-            Debug.Log("Opening complete");
-        }
-        else
-        {
-            Debug.LogWarning("Gripper knuckles not initialized.");
-        }
+        SetGripperPosition(openValue);
     }
 
     /// <summary>
@@ -173,6 +144,8 @@ public class TrajectoryPlanner : MonoBehaviour
     {
         // Publish the table mesh at the start
         PublishTableMesh();
+        // Publish the printer mesh at the start
+        PublishPrinterMesh();
 
         var request = new MoverServiceRequest();
         request.joints_input = CurrentJointConfig();
@@ -181,19 +154,15 @@ public class TrajectoryPlanner : MonoBehaviour
         request.pick_pose = new PoseMsg
         {
             position = (m_Target.transform.position + m_PickPoseOffset).To<FLU>(),
-            orientation = Quaternion.Euler(180, m_Target.transform.eulerAngles.y, 0).To<FLU>()
+            orientation = m_PickOrientation.To<FLU>()
         };
-
-        Debug.Log($"Pick Pose: Position: {request.pick_pose.position.x}, {request.pick_pose.position.y}, {request.pick_pose.position.z} | Orientation: {request.pick_pose.orientation.x}, {request.pick_pose.orientation.y}, {request.pick_pose.orientation.z}, {request.pick_pose.orientation.w}");
 
         // Place Pose
         request.place_pose = new PoseMsg
         {
-            position = (m_TargetPlacement.transform.position + m_PickPoseOffset).To<FLU>(),
-            orientation = m_PickOrientation.To<FLU>()
+            position = (m_TargetPlacement.transform.position + m_PlacePoseOffset).To<FLU>(),
+            orientation = m_PlaceOrientation.To<FLU>()
         };
-
-        Debug.Log($"Place Pose: Position: {request.place_pose.position.x}, {request.place_pose.position.y}, {request.place_pose.position.z} | Orientation: {request.place_pose.orientation.x}, {request.place_pose.orientation.y}, {request.place_pose.orientation.z}, {request.place_pose.orientation.w}");
 
         m_Ros.SendServiceMessage<MoverServiceResponse>(m_RosServiceName, request, TrajectoryResponse);
     }
@@ -323,14 +292,15 @@ public class TrajectoryPlanner : MonoBehaviour
             triangles = triangleMsgs.ToArray()
         };
 
-        Quaternion unityRotation = m_Table.transform.rotation;
-        Debug.Log($"Original Unity Rotation: {unityRotation.eulerAngles}");
-        Debug.Log($"Converted FLU Rotation: {unityRotation.eulerAngles.To<FLU>()}");
         // Get the table's position and rotation in FLU
         PoseMsg tablePose = new PoseMsg
         {
-            position = m_Table.transform.position.To<FLU>(),
-            orientation = m_Table.transform.rotation.To<FLU>()
+            // Set the position of the object to the origin (0, 0, 0) in the base_link frame
+            position = new PointMsg(0.0, 0.0, 0.0),
+
+            // Set the orientation of the object to no rotation (identity quaternion) in the base_link frame
+            orientation = new QuaternionMsg(0.0, 0.0, 0.0, 1.0)
+
         };
 
         // Create CollisionObjectMsg
@@ -338,7 +308,7 @@ public class TrajectoryPlanner : MonoBehaviour
         {
             header = new HeaderMsg
             {
-                frame_id = "world"
+                frame_id = "base_link"
             },
             id = "table",
             operation = CollisionObjectMsg.ADD,
@@ -348,6 +318,110 @@ public class TrajectoryPlanner : MonoBehaviour
 
         // Publish the CollisionObjectMsg
         m_Ros.Publish("/collision_object", collisionObject);
+    }
+
+    void PublishPrinterMesh()
+    {
+        // Get the MeshFilter component from the 3D Printer GameObject
+        MeshFilter meshFilter = m_Printer.GetComponent<MeshFilter>();
+        if (meshFilter == null)
+        {
+            Debug.LogError("MeshFilter component not found on 3D Printer GameObject.");
+            return;
+        }
+
+        // Retrieve the mesh, vertices, and triangles data
+        Mesh mesh = meshFilter.mesh;
+        Vector3[] vertices = mesh.vertices;
+        int[] triangles = mesh.triangles;
+
+        // Validate mesh data
+        if (vertices == null || vertices.Length == 0 || triangles == null || triangles.Length == 0)
+        {
+            Debug.LogError("Mesh data is invalid or empty.");
+            return;
+        }
+        // Prepare vertices and triangles for ROS messages
+        List<PointMsg> points = new List<PointMsg>();
+        foreach (Vector3 vertex in vertices)
+        {
+            // Convert vertex to FLU orientation and add to points list
+            var fluVertex = m_Printer.transform.TransformPoint(vertex).To<FLU>();
+            points.Add(new PointMsg(fluVertex.x, fluVertex.y, fluVertex.z));
+        }
+
+        List<MeshTriangleMsg> triangleMsgs = new List<MeshTriangleMsg>();
+        for (int i = 0; i < triangles.Length; i += 3)
+        {
+            triangleMsgs.Add(new MeshTriangleMsg
+            {
+                vertex_indices = new uint[]
+                {
+                    (uint)triangles[i],
+                    (uint)triangles[i + 2], // Swap these two indices
+                    (uint)triangles[i + 1]
+                }
+            });
+        }
+
+        // Create MeshMsg
+        MeshMsg meshMsg = new MeshMsg
+        {
+            vertices = points.ToArray(),
+            triangles = triangleMsgs.ToArray()
+        };
+        
+        PoseMsg printerPose = new PoseMsg
+        {
+            // Set the position of the object to the origin (0, 0, 0) in the base_link frame
+            position = new PointMsg(0.0, 0.0, 0.0),
+
+            // Set the orientation of the object to no rotation (identity quaternion) in the base_link frame
+            orientation = new QuaternionMsg(0.0, 0.0, 0.0, 1.0)
+        };
+
+        // Create CollisionObjectMsg
+        var collisionObject = new CollisionObjectMsg
+        {
+            header = new HeaderMsg
+            {
+                frame_id = "base_link"
+            },
+            id = "3d_printer",
+            operation = CollisionObjectMsg.ADD,
+            mesh_poses = new PoseMsg[] { printerPose },
+            meshes = new MeshMsg[] { meshMsg }
+        };
+
+        // Publish the CollisionObjectMsg
+        m_Ros.Publish("/collision_object", collisionObject);
+    }
+
+    void SetGripperPosition(float position)
+    {
+        ArticulationDrive drive = m_LeftInnerKnuckle.xDrive;
+        drive.target = -position;
+        m_LeftInnerKnuckle.xDrive = drive;
+
+        drive = m_RightInnerKnuckle.xDrive;
+        drive.target = -position;
+        m_RightInnerKnuckle.xDrive = drive;
+
+        drive = m_LeftOuterKnuckle.xDrive;
+        drive.target = position;
+        m_LeftOuterKnuckle.xDrive = drive;
+
+        drive = m_RightOuterKnuckle.xDrive;
+        drive.target = -position;
+        m_RightOuterKnuckle.xDrive = drive;
+
+        drive = m_leftInnerFinger.xDrive;
+        drive.target = position;
+        m_leftInnerFinger.xDrive = drive;
+
+        drive = m_rightInnerFinger.xDrive;
+        drive.target = position;
+        m_rightInnerFinger.xDrive = drive;
     }
 
 }

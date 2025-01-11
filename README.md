@@ -29,7 +29,8 @@ Ensure you have the following software installed:
 - [MoveIt](https://moveit.ros.org/install/)
 - [Unity hub](https://unity.com/download)
 - [Unity 2020.3.11f1 (LTS)](https://unity.com/releases/editor/archive)
-
+-[3D PRINTER](https://sketchfab.com/3d-models/2-makerbot-10e13be074dd4d55a97b129c9b4d1959)
+-[sketchfab plugin](https://github.com/sketchfab/unity-plugin/releases)
 ### Clone the Repository
 
 ```bash
@@ -53,6 +54,7 @@ sudo -H pip3 install rospkg jsonpickle
 cd ROS
 catkin_make
 source devel/setup.bash
+SketchfabForUnity-v1.2.1.unitypackage
 ```
 
 Ensure there are no errors. The ROS workspace is now ready to accept commands!
@@ -64,6 +66,7 @@ Ensure there are no errors. The ROS workspace is now ready to accept commands!
 2. Click the newly added project to open it.
 
 3. In the Unity Project window, double click to open the `Assets/Scenes/EmptyScene` scene if it is not already open.
+4. Drag and drop SketchfabForUnity-v1.2.1.unitypackage file to the Asset panel  .
 
 4. Set up your corresponding path in your PC based on your cloned project , build message path
 ![Build msg](image/image.png)
