@@ -65,6 +65,9 @@ Ensure there are no errors. The ROS workspace is now ready to accept commands!
 
 3. In the Unity Project window, double click to open the `Assets/Scenes/EmptyScene` scene if it is not already open.
 
+4. Set up your corresponding path in your PC based on your cloned project , build message path
+![Build msg](image/image.png)
+
 ## Usage
 
 Follow these steps to run the simulation:
