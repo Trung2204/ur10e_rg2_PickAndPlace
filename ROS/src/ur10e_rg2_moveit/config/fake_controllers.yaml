@@ -13,7 +13,5 @@ controller_list:
     joints:
       - finger_joint
 initial:  # Define initial robot poses per group
-#  - group: arm
-#    pose: home
-
-  []
+  - group: arm
+    pose: default
