@@ -110,9 +110,3 @@ ur10e_rg2_PickAndPlace/
 │   ├── UserSettings/
 ├── README.md
 ```
-
-## Contributing
-// TODO: Add contributing
-
-## License
-// TODO: Add License
