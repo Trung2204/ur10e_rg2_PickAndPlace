@@ -70,6 +70,12 @@ Ensure there are no errors. The ROS workspace is now ready to accept commands!
 
 4. Set up your corresponding path in your PC based on your cloned project , build message path
 ![Build msg](Image/image.png)
+5. Change your IP in ROS Settings 
+```
+#copy into ROS Settings
+hostname -I
+```
+
 
 ## Usage
 
