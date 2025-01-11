@@ -51,8 +51,6 @@ sudo -H pip3 install rospkg jsonpickle
 cd ROS
 catkin_make
 source devel/setup.bash
-roslaunch ur10e_rg2_moveit test_TrajectoryPlanner.launch
-
 ```
 
 Ensure there are no errors. The ROS workspace is now ready to accept commands!
@@ -76,10 +74,15 @@ hostname -I
 
 
 ## Usage
-
-Follow these steps to run the simulation:
-// TODO: Add usage
-
+**ROS Side **:
+```
+cd ROS
+catkin_make
+source devel/setup.bash
+roslaunch ur10e_rg2_moveit test_TrajectoryPlanner.launch
+```
+**Unity Side** :
+Click play button in game mode and publish
 ## Project Structure
 
 ```
