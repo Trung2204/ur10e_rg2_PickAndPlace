@@ -28,17 +28,6 @@ if sys.version_info >= (3, 0):
 else:
     def planCompat(plan):
         return plan
-
-"""
-    Callback function to log the received collision object message.
-"""
-def collision_callback(msg):
-    rospy.loginfo("Received a new collision object message:")
-    rospy.loginfo("ID: %s", msg.id)
-    if len(msg.mesh_poses) > 0:
-        pose = msg.mesh_poses[0]
-        rospy.loginfo("Pose: position - x=%f, y=%f, z=%f", pose.position.x, pose.position.y, pose.position.z)
-        rospy.loginfo("Pose: orientation - x=%f, y=%f, z=%f, w=%f", pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)
    
 """
     Given the start angles of the robot, plan a trajectory that ends at the destination pose.
@@ -83,6 +72,8 @@ def plan_pick_and_place(req):
 
     group_name = "arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
+    move_group.set_planning_pipeline_id("stomp")
+    move_group.set_planner_id("STOMP")
 
     current_robot_joint_configuration = req.joints_input.joints
 
@@ -142,7 +133,7 @@ def moveit_server():
     print("Ready to plan")
 
     # Set up the subscriber for collision objects
-    rospy.Subscriber("/collision_object", CollisionObject, collision_callback)
+    rospy.Subscriber("/collision_object", CollisionObject)
 
     rospy.spin()
 

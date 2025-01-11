@@ -13,7 +13,7 @@
     <node name="mover" pkg="ur10e_rg2_moveit" type="mover.py" args="--wait" output="screen"/>
 
     <!-- Specify the planning pipeline -->
-    <arg name="pipeline" default="ompl" />
+    <arg name="pipeline" default="stomp" />
 
     <!-- By default, we do not start a database (it can be large) -->
     <arg name="db" default="false" />
