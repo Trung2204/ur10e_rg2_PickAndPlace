@@ -54,7 +54,8 @@ sudo -H pip3 install rospkg jsonpickle
 cd ROS
 catkin_make
 source devel/setup.bash
-SketchfabForUnity-v1.2.1.unitypackage
+roslaunch ur10e_rg2_moveit test_TrajectoryPlanner.launch
+
 ```
 
 Ensure there are no errors. The ROS workspace is now ready to accept commands!
