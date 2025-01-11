@@ -32,7 +32,7 @@ else:
 """
     Given the start angles of the robot, plan a trajectory that ends at the destination pose.
 """
-def plan_trajectory(move_group, destination_pose, start_joint_angles): 
+def plan_trajectory(move_group, destination_pose, start_joint_angles):
     current_joint_state = JointState()
     current_joint_state.name = joint_names
     current_joint_state.position = start_joint_angles
@@ -74,8 +74,6 @@ def plan_pick_and_place(req):
     move_group = moveit_commander.MoveGroupCommander(group_name)
     move_group.set_planning_pipeline_id("stomp")
     move_group.set_planner_id("arm")
-    rospy.loginfo("Current planning pipeline ID: %s", move_group.get_planning_pipeline_id())
-    rospy.loginfo("Current planner ID: %s", move_group.get_planner_id())
 
     current_robot_joint_configuration = req.joints_input.joints
 

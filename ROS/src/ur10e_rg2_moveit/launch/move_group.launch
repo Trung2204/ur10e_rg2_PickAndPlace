@@ -52,9 +52,9 @@
     </include>
 
     <!-- OMPL -->
-    <!-- <include file="$(dirname)/planning_pipeline.launch.xml">
+    <include file="$(dirname)/planning_pipeline.launch.xml">
       <arg name="pipeline" value="ompl" />
-    </include> -->
+    </include>
 
     <!-- CHOMP -->
     <!-- <include file="$(dirname)/planning_pipeline.launch.xml">
@@ -92,7 +92,7 @@
 
     <param name="allow_trajectory_execution" value="$(arg allow_trajectory_execution)"/>
     <param name="sense_for_plan/max_safe_path_cost" value="$(arg max_safe_path_cost)"/>
-    <param name="default_planning_pipeline" value="$(arg pipeline)" />
+    <param name="default_planning_pipeline" value="stomp" />
     <param name="capabilities" value="$(arg capabilities)" />
     <param name="disable_capabilities" value="$(arg disable_capabilities)" />
 
