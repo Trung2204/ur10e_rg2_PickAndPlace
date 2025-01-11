@@ -69,7 +69,7 @@ Ensure there are no errors. The ROS workspace is now ready to accept commands!
 4. Drag and drop SketchfabForUnity-v1.2.1.unitypackage file to the Asset panel  .
 
 4. Set up your corresponding path in your PC based on your cloned project , build message path
-![Build msg](image/image.png)
+![Build msg](Image/image.png)
 
 ## Usage
 
