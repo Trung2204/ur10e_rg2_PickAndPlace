@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a part of a module taught at Vietnamese-German University (VGU), instructed by Dr. Dong Quang Huan. The goal of this project is to adapt the pick and place tutorial from the [Unity Robotics Hub](https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place) for the UR10e robot arm integrated with the OnRobot RG2 gripper. The objective is to automate the process of picking an object from inside a 3D printer and placing it at a desired location in a simulated environment using Unity. The project utilizes the Stochastic Trajectory Optimization for Motion Planning (STOMP) planner for motion planning.
+This project is a part of a module at [Vietnamese-German University](https://vgu.edu.vn/), instructed by Dr.-Ing. Quang Huan Dong (huan.dq@vgu.edu.vn). The goal of this project is to adapt the pick and place tutorial from the [Unity Robotics Hub](https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place) for the UR10e robot arm integrated with the OnRobot RG2 gripper. The objective is to automate the process of picking an object from inside a 3D printer and placing it at a desired location in a simulated environment using Unity. The project utilizes the Stochastic Trajectory Optimization for Motion Planning (STOMP) planner for motion planning.
 
 ## Table of Contents
 
@@ -13,6 +13,7 @@ This project is a part of a module taught at Vietnamese-German University (VGU),
   - [Set Up ROS Workspace](#set-up-ros-workspace)
   - [Configure Unity Project](#configure-unity-project)
 - [Usage](#usage)
+- [Expected outcome](#expected-outcome)
 - [Project Structure](#project-structure)
 
 ## Installation
@@ -78,7 +79,7 @@ Ensure there are no errors. The ROS workspace is now ready to accept commands!
 
 4. Drag and drop [SketchfabForUnity-v1.2.1.unitypackage](https://github.com/sketchfab/unity-plugin/releases) file to the Asset panel.
 
-   Follow the instructions to finish Sketchfab plugin for Unity.
+   Follow the instructions to finish the setup of Sketchfab plugin for Unity.
 
 5. Generate the MoveItMsg: RobotTrajectory, CollisionObject. These file describes the trajectory and collision contents that will be used in the sent and received messages.
 
@@ -125,6 +126,10 @@ roslaunch ur10e_rg2_moveit TrajectoryPlanner.launch
 1. If the PickAndPlaceProject Unity project is not already open, select and open it from the Unity Hub.
 2. Press the Play button at the top of the Unity Editor to enter Play Mode. If everything imported correctly, no errors should appear in the Console window. The robot arm should stay “mounted” to the table, and nothing should fall through the floor.
 3. Press the UI Button Publish to send the joint configurations to ROS, and watch the robot arm pick up and place the cube!
+
+## Expected Outcome
+
+  ![](img/expected_outcome.gif)
 
 ## Project Structure
 ```
