@@ -13,7 +13,7 @@
     <node name="mover" pkg="ur10e_rg2_moveit" type="mover.py" args="--wait" output="screen"/>
 
     <!-- Specify the planning pipeline -->
-    <arg name="pipeline" default="stomp" />
+    <arg name="pipeline" default="ompl" />
 
     <!-- By default, we do not start a database (it can be large) -->
     <arg name="db" default="false" />
@@ -61,7 +61,7 @@
         <arg name="fake_execution_type" value="$(arg fake_execution_type)"/>
         <arg name="info" value="true"/>
         <arg name="debug" value="$(arg debug)"/>
-        <arg name="pipeline" value="stomp"/>
+        <arg name="pipeline" value="$(arg pipeline)"/>
         <arg name="load_robot_description" value="$(arg load_robot_description)"/>
     </include>
 

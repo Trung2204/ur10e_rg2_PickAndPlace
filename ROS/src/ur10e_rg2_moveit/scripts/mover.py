@@ -72,8 +72,8 @@ def plan_pick_and_place(req):
 
     group_name = "arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
-    move_group.set_planning_pipeline_id("stomp")
-    move_group.set_planner_id("arm")
+    # move_group.set_planning_pipeline_id("stomp")
+    # move_group.set_planner_id("arm")
 
     current_robot_joint_configuration = req.joints_input.joints
 
