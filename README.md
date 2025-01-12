@@ -75,6 +75,7 @@ Ensure there are no errors. The ROS workspace is now ready to accept commands!
 2. Click the newly added project to open it.
 
 3. In the Unity Project window, double click to open the `Assets/Scenes/EmptyScene` scene if it is not already open.
+
    ![](Image/0_unity.png)
 
 4. Drag and drop [SketchfabForUnity-v1.2.1.unitypackage](https://github.com/sketchfab/unity-plugin/releases) file to the Asset panel.
@@ -107,7 +108,7 @@ Ensure there are no errors. The ROS workspace is now ready to accept commands!
 
    - Replace the `ROS IP Address` value with the IP address of your ROS machine. Ensure that the `Host Port` is set to `10000`.
 
-   ![](img/2_settings.png)
+   ![](Image/2_settings.png)
 
 ## Usage
 **ROS Side** :
@@ -129,7 +130,7 @@ roslaunch ur10e_rg2_moveit TrajectoryPlanner.launch
 
 ## Expected Outcome
 
-  ![](img/expected_outcome.gif)
+  ![](Image/expected_outcome.gif)
 
 ## Project Structure
 ```
