@@ -46,7 +46,7 @@ public class TrajectoryPlanner : MonoBehaviour
     readonly Quaternion m_PickOrientation = Quaternion.Euler(0, 180, 90);
     readonly Vector3 m_PickPoseOffset = Vector3.left * 0.47f;
     readonly Quaternion m_PlaceOrientation = Quaternion.Euler(0, 90, 180);
-    readonly Vector3 m_PlacePoseOffset = Vector3.up * 0.25f;
+    readonly Vector3 m_PlacePoseOffset = Vector3.up * 0.28f;
 
     // Articulation Bodies for the Robot arm
     ArticulationBody[] m_JointArticulationBodies;
@@ -103,7 +103,7 @@ public class TrajectoryPlanner : MonoBehaviour
     /// </summary>
     void CloseGripper()
     {
-        float closeValue = 23f;
+        float closeValue = 24f;
 
         SetGripperPosition(closeValue);
     }

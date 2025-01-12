@@ -72,8 +72,18 @@ def plan_pick_and_place(req):
 
     group_name = "arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
-    # move_group.set_planning_pipeline_id("stomp")
-    # move_group.set_planner_id("arm")
+    # If no planning pipeline id is set, the default is OMPL
+    # If no planner id is set, the default is RRTConnect: Fast and efficient for finding a feasible path.
+
+    # Move to RRT*: Finds optimal paths while ensuring feasibility. Slower compared to RRTConnect but ensures better solutions.
+    # move_group.set_planner_id("RRTstar")
+
+    # Move to AnytimePathShortening (for RRTConnect and RRTstart): Combines path shortcuts and hybridization for smooth trajectories.
+    # move_group.set_planner_id("AnytimePathShortening")
+
+    # STOMP planner
+    move_group.set_planning_pipeline_id("stomp")
+    move_group.set_planner_id("arm")
 
     current_robot_joint_configuration = req.joints_input.joints
 
