@@ -8760,7 +8760,7 @@ PrefabInstance:
       objectReference: {fileID: 13400000, guid: 3bedaf7bb334355588ff242319d6ebf1, type: 2}
     - target: {fileID: 4064412142990923027, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_Mass
-      value: 0.01
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 4064412142990923027, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_UseGravity
