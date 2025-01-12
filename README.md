@@ -48,7 +48,7 @@ sudo apt-get update && sudo apt-get upgrade
 sudo apt-get install python3-pip ros-noetic-robot-state-publisher ros-noetic-moveit ros-noetic-rosbridge-suite ros-noetic-joy ros-noetic-ros-control ros-noetic-ros-controllers
 sudo -H pip3 install rospkg jsonpickle
 ```
-4. Installing STOMP from Source
+4. Instal [STOMP](https://moveit.github.io/moveit_tutorials/doc/stomp_planner/stomp_planner_tutorial.html) from Source
 ```bash
 cd ~/ROS
 source /opt/ros/noetic/setup.bash
