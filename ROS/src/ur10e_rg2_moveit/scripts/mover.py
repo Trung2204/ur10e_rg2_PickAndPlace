@@ -82,8 +82,8 @@ def plan_pick_and_place(req):
     # move_group.set_planner_id("AnytimePathShortening")
 
     # STOMP planner
-    move_group.set_planning_pipeline_id("stomp")
-    move_group.set_planner_id("arm")
+    # move_group.set_planning_pipeline_id("stomp")
+    # move_group.set_planner_id("arm")
 
     current_robot_joint_configuration = req.joints_input.joints
 
