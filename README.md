@@ -28,8 +28,8 @@ Ensure you have the following software installed:
 - [MoveIt](https://moveit.github.io/moveit_tutorials/doc/getting_started/getting_started.html) 
 - [Unity hub](https://unity.com/download)
 - [Unity 2020.3.11f1 (LTS)](https://unity.com/releases/editor/archive)
-- [3D PRINTER](https://sketchfab.com/3d-models/2-makerbot-10e13be074dd4d55a97b129c9b4d1959)
-- [sketchfab plugin](https://github.com/sketchfab/unity-plugin/releases)
+- [3D Printer MakerBot Replicator](https://sketchfab.com/3d-models/2-makerbot-10e13be074dd4d55a97b129c9b4d1959)
+- [Sketchfab plugin for Unity](https://github.com/sketchfab/unity-plugin/releases)
 
 ### Clone the Repository
 
